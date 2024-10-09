@@ -1,1 +1,33 @@
-# my-flutter-tutorial
+# oauth_app
+
+A new Flutter project.
+
+## Getting Started
+
+This project is a starting point for a Flutter application that follows the
+[simple app state management
+tutorial](https://flutter.dev/to/state-management-sample).
+
+For help getting started with Flutter development, view the
+[online documentation](https://docs.flutter.dev), which offers tutorials,
+samples, guidance on mobile development, and a full API reference.
+
+```
+flutter run -d web-server --web-port 3000 --web-hostname 0.0.0.0 --web-renderer html
+```
+
+## Assets
+
+The `assets` directory houses images, fonts, and any other files you want to
+include with your application.
+
+The `assets/images` directory contains [resolution-aware
+images](https://flutter.dev/to/resolution-aware-images).
+
+## Localization
+
+This project generates localized messages based on arb files found in
+the `lib/src/localization` directory.
+
+To support additional languages, please visit the tutorial on
+[Internationalizing Flutter apps](https://flutter.dev/to/internationalization).
