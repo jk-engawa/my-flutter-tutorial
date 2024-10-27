@@ -1,0 +1,24 @@
+[
+    {
+      "id": 1,
+      "name": "Item A",
+      "category": "Electronics",
+      "quantity": 50,
+      "price": 299.99
+    },
+    {
+      "id": 2,
+      "name": "Item B",
+      "category": "Apparel",
+      "quantity": 120,
+      "price": 49.99
+    },
+    {
+      "id": 3,
+      "name": "Item C",
+      "category": "Kitchen",
+      "quantity": 75,
+      "price": 19.99
+    }
+  ]
+  
