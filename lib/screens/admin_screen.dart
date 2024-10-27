@@ -7,23 +7,22 @@ class AdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MainLayout(
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
-              Text(
-                'Admin Panel',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'This page is only accessible by administrators.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
+    return MainLayout(
+      title: 'Admin Page', // ページのタイトル
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Text(
+              'Admin Panel',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'This page is only accessible by administrators.',
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       ),
     );

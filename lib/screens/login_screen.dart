@@ -16,7 +16,7 @@ class LoginScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory Management System v1'),
+        title: const Text('Inventory Management System'), // 固定のタイトル
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

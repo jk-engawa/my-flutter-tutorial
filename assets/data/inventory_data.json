@@ -1,24 +1,65 @@
 [
-    {
-      "id": 1,
-      "name": "Item A",
-      "category": "Electronics",
-      "quantity": 50,
-      "price": 299.99
-    },
-    {
-      "id": 2,
-      "name": "Item B",
-      "category": "Apparel",
-      "quantity": 120,
-      "price": 49.99
-    },
-    {
-      "id": 3,
-      "name": "Item C",
-      "category": "Kitchen",
-      "quantity": 75,
-      "price": 19.99
-    }
-  ]
-  
+  {
+    "id": 1,
+    "name": "Laptop",
+    "category": "Electronics",
+    "quantity": 30,
+    "price": 899.99
+  },
+  {
+    "id": 2,
+    "name": "Headphones",
+    "category": "Electronics",
+    "quantity": 100,
+    "price": 199.99
+  },
+  {
+    "id": 3,
+    "name": "T-shirt",
+    "category": "Apparel",
+    "quantity": 200,
+    "price": 15.99
+  },
+  {
+    "id": 4,
+    "name": "Blender",
+    "category": "Home Appliances",
+    "quantity": 50,
+    "price": 49.99
+  },
+  {
+    "id": 5,
+    "name": "Microwave",
+    "category": "Home Appliances",
+    "quantity": 20,
+    "price": 99.99
+  },
+  {
+    "id": 6,
+    "name": "Coffee Maker",
+    "category": "Home Appliances",
+    "quantity": 45,
+    "price": 69.99
+  },
+  {
+    "id": 7,
+    "name": "Running Shoes",
+    "category": "Footwear",
+    "quantity": 80,
+    "price": 49.99
+  },
+  {
+    "id": 8,
+    "name": "Sandals",
+    "category": "Footwear",
+    "quantity": 60,
+    "price": 24.99
+  },
+  {
+    "id": 9,
+    "name": "Refrigerator",
+    "category": "Home Appliances",
+    "quantity": 10,
+    "price": 499.99
+  }
+]

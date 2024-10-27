@@ -35,24 +35,31 @@ class _InventoryScreenState extends State<InventoryScreen> {
   @override
   Widget build(BuildContext context) {
     return MainLayout(
-      child: Scaffold(
-        body: ListView.builder(
-          itemCount: inventoryItems.length,
-          itemBuilder: (context, index) {
-            final item = inventoryItems[index];
-            return ListTile(
-              title: Text(item.name),
-              subtitle: Text('Category: ${item.category}'),
-              trailing: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text('Quantity: ${item.quantity}'),
-                  Text('Price: \$${item.price.toStringAsFixed(2)}'),
-                ],
-              ),
-            );
-          },
-        ),
+      title: 'Inventory List',
+      child: ListView.builder(
+        itemCount: inventoryItems.length,
+        itemBuilder: (context, index) {
+          final item = inventoryItems[index];
+          return ListTile(
+            title: Text(item.name),
+            subtitle: Text('Category: ${item.category}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.remove),
+                  onPressed: () => setState(() => item.quantity =
+                      (item.quantity - 1).clamp(0, item.quantity)),
+                ),
+                Text('Quantity: ${item.quantity}'),
+                IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () => setState(() => item.quantity += 1),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

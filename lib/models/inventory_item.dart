@@ -3,7 +3,7 @@ class InventoryItem {
   final int id;
   final String name;
   final String category;
-  final int quantity;
+  int quantity;
   final double price;
 
   InventoryItem({
