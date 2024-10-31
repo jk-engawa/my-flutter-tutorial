@@ -8,7 +8,7 @@ class LoginScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(authProvider.notifier);
+    final auth = ref.watch(authNotifierProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(

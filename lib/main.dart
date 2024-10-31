@@ -25,25 +25,25 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   void initState() {
     super.initState();
-    final uri = Uri.base;
-    if (uri.path == '/redirect') {
-      ref.read(authProvider.notifier).handleAuthRedirect(uri);
-    } else if (html.window.localStorage['is_authenticated'] == 'true') {
-      // ログイン済みの場合のセッション検証
-      ref.read(authProvider.notifier).signInWithOAuth();
-    }
+    // final uri = Uri.base;
+    // if (uri.path == '/redirect') {
+    //   ref.read(authProvider.notifier).handleAuthRedirect(uri);
+    // } else if (html.window.localStorage['is_authenticated'] == 'true') {
+    //   // ログイン済みの場合のセッション検証
+    //   ref.read(authProvider.notifier).signInWithOAuth();
+    // }
   }
 
   @override
   Widget build(BuildContext context) {
-    final router = createRouter(ref);
+    // GoRouterのインスタンスを取得
+    final router = ref.watch(createRouterProvider);
+
     return MaterialApp.router(
       routerConfig: router,
       debugShowCheckedModeBanner: false,
       title: 'Inventory Management System',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
     );
   }
 }

@@ -23,20 +23,45 @@ class SideMenu extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authProvider); // 認証情報を取得
+    final authState = ref.watch(authNotifierProvider); // 認証情報を取得
 
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          UserAccountsDrawerHeader(
-            accountName: Text(user?.name ?? 'Guest'),
-            accountEmail: Text(user?.email ?? 'Please log in'),
-            currentAccountPicture: CircleAvatar(
-              child: Text(
-                user?.name.isNotEmpty == true
-                    ? user!.name[0]
-                    : '?', // ユーザーのイニシャル
+          authState.when(
+            data: (auth) {
+              // `auth`が`SignedIn`の場合にのみ`name`や`email`を表示
+              if (auth is SignedIn) {
+                return UserAccountsDrawerHeader(
+                  accountName: Text(auth.name),
+                  accountEmail: Text(auth.email),
+                  currentAccountPicture: CircleAvatar(
+                    child: Text(auth.name.isNotEmpty ? auth.name[0] : '?'),
+                  ),
+                );
+              } else {
+                return const UserAccountsDrawerHeader(
+                  accountName: Text('Guest'),
+                  accountEmail: Text('Please log in'),
+                  currentAccountPicture: CircleAvatar(
+                    child: Text('?'),
+                  ),
+                );
+              }
+            },
+            loading: () => const UserAccountsDrawerHeader(
+              accountName: Text('Loading...'),
+              accountEmail: Text('Please wait'),
+              currentAccountPicture: CircleAvatar(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+            error: (error, _) => UserAccountsDrawerHeader(
+              accountName: Text('Error'),
+              accountEmail: Text(error.toString()),
+              currentAccountPicture: const CircleAvatar(
+                child: Icon(Icons.error),
               ),
             ),
           ),
@@ -59,15 +84,15 @@ class SideMenu extends ConsumerWidget {
             onTap: () => context.go('/settings'),
           ),
           // ログイン中の場合のみ表示されるサインアウトメニュー
-          if (user != null)
+          if (authState.asData?.value != null)
             _buildMenuItem(
               icon: Icons.logout,
               title: 'Logout',
-              onTap: () {
-                ref.read(authProvider.notifier).signOut();
+              onTap: () async {
+                await ref.read(authNotifierProvider.notifier).signOut();
                 context.go('/login');
               },
-            ),
+            )
         ],
       ),
     );

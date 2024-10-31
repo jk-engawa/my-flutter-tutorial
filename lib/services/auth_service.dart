@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:html' as html;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../env.dart';
 
 class AuthService {
@@ -13,6 +13,7 @@ class AuthService {
   final String authorizationEndpoint = Env.authUrl;
   final String tokenEndpoint = Env.tokenUrl;
   final String userInfoEndpoint = Env.userInfoUrl;
+  final _secureStorage = const FlutterSecureStorage();
 
   late String _codeVerifier;
   late String _state;
@@ -44,9 +45,10 @@ class AuthService {
     final codeChallenge = _generateCodeChallenge();
     final state = _generateState();
 
-    // 認可リクエストに使用するcodeVerifierとstateをlocalStorageに保存
-    html.window.localStorage['oauth_code_verifier'] = _codeVerifier;
-    html.window.localStorage['oauth_state'] = state;
+    // 認可リクエストに使用するcodeVerifierとstateをStorageに保存
+    await _secureStorage.write(
+        key: 'oauth_code_verifier', value: _codeVerifier);
+    await _secureStorage.write(key: 'oauth_state', value: _state);
 
     final authorizationUrl = Uri.parse('$authorizationEndpoint'
         '?client_id=$clientId'
@@ -56,8 +58,6 @@ class AuthService {
         '&code_challenge_method=S256'
         '&code_challenge=$codeChallenge'
         '&state=$state');
-
-    html.window.localStorage['oauth_state'] = state; // stateをlocalStorageに保存
 
     if (await canLaunchUrl(authorizationUrl)) {
       await launchUrl(authorizationUrl,
@@ -71,16 +71,17 @@ class AuthService {
   Future<Map<String, dynamic>> exchangeCodeForToken(
       String authCode, String state) async {
     // localStorageからcodeVerifierとstateを取得して検証
-    final storedCodeVerifier = html.window.localStorage['oauth_code_verifier'];
-    final storedState = html.window.localStorage['oauth_state'];
+    final storedCodeVerifier =
+        await _secureStorage.read(key: 'oauth_code_verifier');
+    final storedState = await _secureStorage.read(key: 'oauth_state');
 
     if (state != storedState) {
       throw Exception('Invalid state parameter'); // state検証
     }
 
     // 使用後にlocalStorageから削除
-    html.window.localStorage.remove('oauth_code_verifier');
-    html.window.localStorage.remove('oauth_state');
+    await _secureStorage.delete(key: 'oauth_code_verifier');
+    await _secureStorage.delete(key: 'oauth_state');
 
     final response = await http.post(
       Uri.parse(tokenEndpoint),
