@@ -24,13 +24,6 @@ sealed class Auth with _$Auth {
       };
 }
 
-class OAuthUser {
-  final String name;
-  final String email;
-
-  const OAuthUser(this.name, this.email);
-}
-
 @riverpod
 class AuthNotifier extends _$AuthNotifier {
   final AuthService _authService = AuthService();

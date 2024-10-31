@@ -17,8 +17,6 @@ part 'router.g.dart';
 // GoRouterの設定を関数で返す
 @riverpod
 GoRouter createRouter(CreateRouterRef ref) {
-  // final auth = ref.watch(authNotifierProvider);
-  // final isAuth = ValueNotifier<AsyncValue<OAuthUser?>>(const AsyncData(null));
   final isAuth = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
   ref
     ..onDispose(isAuth.dispose)
@@ -55,26 +53,6 @@ GoRouter createRouter(CreateRouterRef ref) {
         return null;
       }
 
-      // if (auth) {
-      //   print('please relogin');
-      //   return '/login';
-      // }
-
-      // if (isAuth.value.isLoading || !isAuth.value.hasValue) {
-      // if (!isAuth.value.hasValue) {
-      //   print('/redirect');
-      //   return '/redirect';
-      // }
-
-      // if (state.fullPath == '/redirect') {
-      //   print('redirect ok? ${auth ? '/' : 'login'}');
-      //   return auth ? '/' : 'login';
-      // }
-
-      // if (state.fullPath == '/login') {
-      //   print('login ok? ${auth ? '/' : 'login'}');
-      //   return auth ? '/' : null;
-      // }
       print('others');
       return auth ? null : '/login';
     },

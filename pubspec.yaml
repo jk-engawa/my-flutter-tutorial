@@ -36,12 +36,12 @@ dependencies:
     sdk: flutter
   flutter_dotenv:
   http:
-  crypto:
+  crypto: ^3.0.6
   url_launcher: ^6.3.1
   oauth2: ^2.0.3
   flutter_secure_storage: ^9.2.2
-  riverpod_annotation:
-  freezed_annotation:
+  riverpod_annotation: ^2.6.1
+  freezed_annotation: ^2.4.4
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -51,11 +51,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  riverpod_generator:
-  build_runner:
+  riverpod_generator: ^2.6.2
+  build_runner: ^2.4.13
   go_router_builder:
-  freezed:
-  json_serializable:
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
