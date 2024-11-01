@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../services/auth_service.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 
 part 'auth_provider.g.dart';
 part 'auth_provider.freezed.dart';
@@ -14,7 +15,8 @@ sealed class Auth with _$Auth {
   const factory Auth.signedIn({
     required String email,
     required String name,
-    required String token,
+    // required String token,
+    required oauth2.Client client,
   }) = SignedIn;
   const Auth._();
   const factory Auth.signedOut() = SignedOut;
@@ -44,59 +46,62 @@ class AuthNotifier extends _$AuthNotifier {
       }
 
       next.requireValue.map<void>(signedIn: (signedIn) async {
-        await _secureStorage.write(key: 'access_token', value: signedIn.token);
+        await _secureStorage.write(
+            key: 'client', value: signedIn.client.credentials.toJson());
       }, signedOut: (signedOut) async {
-        await _secureStorage.delete(key: 'access_token');
+        await _secureStorage.delete(key: 'client');
       });
     });
   }
 
-  // アクセストークンをチェックして認証状態を初期化
+  // Check auth client and initialize authentication state
   Future<Auth> _initializeAuthState() async {
-    final accessToken = await _secureStorage.read(key: 'access_token');
+    final oauth2ClientJson = await _secureStorage.read(key: 'client');
     try {
-      // トークンが有効な場合のみユーザー情報を取得
-      if (accessToken == null) throw Exception('No auth token found');
-      final userInfo = await _authService.fetchUserInfo(accessToken);
+      if (oauth2ClientJson == null) throw Exception('No auth token found');
+      final oauth2Client =
+          oauth2.Client(oauth2.Credentials.fromJson(oauth2ClientJson));
+      final userInfo = await _authService.fetchUserInfoNew(oauth2Client);
       print(userInfo.toString());
       return Auth.signedIn(
-          name: userInfo['name'], email: userInfo['email'], token: accessToken);
-    } catch (_) {
-      // トークンが無効であればログイン状態をクリア
+          name: userInfo['name'],
+          email: userInfo['email'],
+          client: oauth2Client);
+    } catch (e) {
+      print(e);
+      // Logout process in case of error.
       await signOut();
       return Future.value(const Auth.signedOut());
     }
   }
 
-  // 認可コード処理を実行
+  // Process to get auth client from authorization code
   Future<void> handleAuthRedirect(Uri uri) async {
-    final code = uri.queryParameters['code'];
-    final state = uri.queryParameters['state'];
-    if (code != null && state != null) {
+    final params = uri.queryParameters;
+    if (params['code'] != null) {
       try {
-        final tokenData = await _authService.exchangeCodeForToken(code, state);
-        final accessToken = tokenData['access_token'];
-        await _secureStorage.write(key: 'access_token', value: accessToken);
-        final userInfo =
-            await _authService.fetchUserInfo(tokenData['access_token']);
+        final oauth2Client = await _authService.handleAuthorizationCode(params);
+        await _secureStorage.write(
+            key: 'client', value: oauth2Client.credentials.toJson());
+        final userInfo = await _authService.fetchUserInfoNew(oauth2Client);
         print(userInfo);
-        this.state = AsyncData(Auth.signedIn(
+        state = AsyncData(Auth.signedIn(
             name: userInfo['name'],
             email: userInfo['email'],
-            token: accessToken));
+            client: oauth2Client));
       } catch (e, s) {
         print('Error during callback handling: $e');
-        this.state = const AsyncData(Auth.signedOut());
+        state = const AsyncData(Auth.signedOut());
       }
     }
   }
 
   Future<void> signInWithOAuth() async {
-    await _authService.authenticate();
+    await _authService.login();
   }
 
   Future<void> signOut() async {
     state = const AsyncData(Auth.signedOut());
-    await _secureStorage.delete(key: 'access_token');
+    await _secureStorage.delete(key: 'client');
   }
 }

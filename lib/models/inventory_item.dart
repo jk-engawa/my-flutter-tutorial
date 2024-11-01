@@ -14,7 +14,6 @@ class InventoryItem {
     required this.price,
   });
 
-  // JSONからInventoryItemオブジェクトを生成
   factory InventoryItem.fromJson(Map<String, dynamic> json) {
     return InventoryItem(
       id: json['id'],

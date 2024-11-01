@@ -6,7 +6,7 @@ import '../providers/auth_provider.dart';
 class SideMenu extends ConsumerWidget {
   const SideMenu({Key? key}) : super(key: key);
 
-  // 共通化されたメニュー項目を生成する関数
+  // Function to generate common menu items
   Widget _buildMenuItem({
     required IconData icon,
     required String title,
@@ -15,15 +15,16 @@ class SideMenu extends ConsumerWidget {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(color: Colors.white)),
-      tileColor: Colors.blue.shade800, // 通常状態の背景色
-      hoverColor: Colors.blue.shade200, // ホバー時の背景色を明るい青に設定
+      tileColor: Colors.blue.shade800,
+      hoverColor: Colors
+          .blue.shade200, // Set the background color on hover to light blue
       onTap: onTap,
     );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authNotifierProvider); // 認証情報を取得
+    final authState = ref.watch(authNotifierProvider); // Get auth state
 
     return Drawer(
       child: ListView(
@@ -31,7 +32,7 @@ class SideMenu extends ConsumerWidget {
         children: [
           authState.when(
             data: (auth) {
-              // `auth`が`SignedIn`の場合にのみ`name`や`email`を表示
+              // Display `name` and `email` only when `auth` is `SignedIn`
               if (auth is SignedIn) {
                 return UserAccountsDrawerHeader(
                   accountName: Text(auth.name),
@@ -65,25 +66,25 @@ class SideMenu extends ConsumerWidget {
               ),
             ),
           ),
-          // Dashboardメニュー
+          // Dashboard
           _buildMenuItem(
             icon: Icons.dashboard,
             title: 'Dashboard',
             onTap: () => context.go('/dashboard'),
           ),
-          // Inventoryメニュー
+          // Inventory
           _buildMenuItem(
             icon: Icons.inventory,
             title: 'Inventory',
             onTap: () => context.go('/inventory'),
           ),
-          // Settingsメニュー
+          // Settings
           _buildMenuItem(
             icon: Icons.settings,
             title: 'Settings',
             onTap: () => context.go('/settings'),
           ),
-          // ログイン中の場合のみ表示されるサインアウトメニュー
+          // Sign out menu only displayed when logged in
           if (authState.asData?.value != null)
             _buildMenuItem(
               icon: Icons.logout,

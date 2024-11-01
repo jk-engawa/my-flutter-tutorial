@@ -18,16 +18,17 @@ class _RedirectScreenState extends ConsumerState<RedirectScreen> {
     _handleAuthRedirect();
   }
 
-  // 認証リダイレクトの処理
+  // Handling authentication redirects
   Future<void> _handleAuthRedirect() async {
     final uri = Uri.base;
 
-    // 認証リダイレクト処理を実行
+    // Execute authentication redirect processing
     await ref.read(authNotifierProvider.notifier).handleAuthRedirect(uri);
 
-    // 認証が完了したらホームページに遷移
+    // Once authentication is complete, you will be redirected to the homepage
     if (mounted) {
-      context.go('/');
+      // context.go('/');
+      context.go('/inventory');
     }
   }
 
@@ -35,7 +36,8 @@ class _RedirectScreenState extends ConsumerState<RedirectScreen> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: CircularProgressIndicator(), // 認証処理中にローディング表示
+        child:
+            CircularProgressIndicator(), // Loading display during authentication process
       ),
     );
   }

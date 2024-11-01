@@ -7,7 +7,7 @@ import 'router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env"); // .envの読み込み
+  await dotenv.load(fileName: ".env");
   usePathUrlStrategy();
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -27,7 +27,7 @@ class _MyAppState extends ConsumerState<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    // GoRouterのインスタンスを取得
+    // Get GoRouter instance
     final router = ref.watch(createRouterProvider);
 
     return MaterialApp.router(

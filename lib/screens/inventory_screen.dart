@@ -15,7 +15,7 @@ class InventoryScreen extends StatefulWidget {
 class _InventoryScreenState extends State<InventoryScreen> {
   List<InventoryItem> inventoryItems = [];
   List<InventoryItem> displayedItems = [];
-  String searchQuery = ""; // 検索クエリを保持
+  String searchQuery = ""; // Retain search queries
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _InventoryScreenState extends State<InventoryScreen> {
     loadInventoryData();
   }
 
-  // JSONデータを読み込み、InventoryItemリストに変換
+  // Read JSON data and convert to InventoryItem list
   Future<void> loadInventoryData() async {
     final String jsonString =
         await rootBundle.loadString('assets/data/inventory_data.json');
@@ -31,15 +31,17 @@ class _InventoryScreenState extends State<InventoryScreen> {
     setState(() {
       inventoryItems =
           jsonData.map((item) => InventoryItem.fromJson(item)).toList();
-      displayedItems = List.from(inventoryItems); // 初期表示は全アイテム
+      displayedItems =
+          List.from(inventoryItems); // Initial display is all items
     });
   }
 
-  // 名前に基づいてリストをフィルタリング
+  // Filter list based on name
   void filterItemsByName() {
     setState(() {
       if (searchQuery.isEmpty) {
-        displayedItems = List.from(inventoryItems); // 検索クエリが空の場合、全アイテムを表示
+        displayedItems = List.from(
+            inventoryItems); // Show all items if search query is empty
       } else {
         displayedItems = inventoryItems.where((item) {
           return item.name.toLowerCase().contains(searchQuery.toLowerCase());
@@ -63,8 +65,8 @@ class _InventoryScreenState extends State<InventoryScreen> {
               ),
               onChanged: (value) {
                 setState(() {
-                  searchQuery = value; // 検索クエリを更新
-                  filterItemsByName(); // リストをフィルタリング
+                  searchQuery = value; // Update search query
+                  filterItemsByName(); // filter list
                 });
               },
             ),

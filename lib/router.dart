@@ -14,7 +14,6 @@ import 'screens/redirect_screen.dart';
 
 part 'router.g.dart';
 
-// GoRouterの設定を関数で返す
 @riverpod
 GoRouter createRouter(CreateRouterRef ref) {
   final isAuth = ValueNotifier<AsyncValue<bool>>(const AsyncLoading());
@@ -44,7 +43,7 @@ GoRouter createRouter(CreateRouterRef ref) {
         return null;
       }
 
-      // 実質的な遷移処理はここから
+      // The actual transition process starts here
       final auth = isAuth.value.requireValue;
       print(auth);
 
@@ -61,7 +60,7 @@ GoRouter createRouter(CreateRouterRef ref) {
         path: '/login',
         builder: (context, state) => const LoginScreen(),
       ),
-      // OAuth認証後のコールバックページ
+      // Callback page after OAuth authentication
       GoRoute(
         path: '/redirect',
         builder: (context, state) => const RedirectScreen(),

@@ -8,7 +8,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MainLayout(
-      title: 'Dashboard Page', // ページのタイトル
+      title: 'Dashboard Page',
       child: Center(child: Text('Dashboard Screen')),
     );
   }

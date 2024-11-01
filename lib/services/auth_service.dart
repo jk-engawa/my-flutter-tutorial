@@ -5,6 +5,7 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 import '../env.dart';
 
 class AuthService {
@@ -18,20 +19,19 @@ class AuthService {
   late String _codeVerifier;
   late String _state;
 
-  // PKCE用のコードチャレンジを生成
-  String _generateCodeChallenge() {
-    final codeVerifier =
-        List.generate(128, (index) => Random.secure().nextInt(256));
-    _codeVerifier = base64UrlEncode(codeVerifier)
-        .replaceAll('=', '')
-        .replaceAll('+', '-')
-        .replaceAll('/', '_')
-        .substring(0, 128); // 最大128文字に収める
-    final bytes = sha256.convert(utf8.encode(_codeVerifier)).bytes;
-    return base64UrlEncode(bytes).replaceAll('=', '');
+  // Randomly generate a 128 character string to be used as the PKCE code
+  // verifier.
+  static String _createCodeVerifier() {
+    const String _charset =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+
+    return List.generate(
+      128,
+      (i) => _charset[Random.secure().nextInt(_charset.length)],
+    ).join();
   }
 
-  // CSRF対策のstateを生成
+  // Generate state for CSRF
   String _generateState() {
     final random = Random.secure();
     _state = List.generate(16, (index) => random.nextInt(256))
@@ -40,24 +40,19 @@ class AuthService {
     return _state;
   }
 
-  // 認証ページにリダイレクト
-  Future<void> authenticate() async {
-    final codeChallenge = _generateCodeChallenge();
+  // Redirect to login page on Auth service.
+  Future<void> login() async {
+    final codeVerifier = _createCodeVerifier();
     final state = _generateState();
+    final authorizationUrl = oauth2.AuthorizationCodeGrant(clientId,
+            Uri.parse(authorizationEndpoint), Uri.parse(tokenEndpoint),
+            codeVerifier: codeVerifier)
+        .getAuthorizationUrl(Uri.parse(redirectUri),
+            scopes: ['openid', 'profile', 'email'], state: state);
 
-    // 認可リクエストに使用するcodeVerifierとstateをStorageに保存
-    await _secureStorage.write(
-        key: 'oauth_code_verifier', value: _codeVerifier);
-    await _secureStorage.write(key: 'oauth_state', value: _state);
-
-    final authorizationUrl = Uri.parse('$authorizationEndpoint'
-        '?client_id=$clientId'
-        '&redirect_uri=$redirectUri'
-        '&response_type=code'
-        '&scope=openid profile email'
-        '&code_challenge_method=S256'
-        '&code_challenge=$codeChallenge'
-        '&state=$state');
+    // 認可リクエストに使用するstateをStorageに保存
+    await _secureStorage.write(key: 'oauth_code_verifier', value: codeVerifier);
+    await _secureStorage.write(key: 'oauth_state', value: state);
 
     if (await canLaunchUrl(authorizationUrl)) {
       await launchUrl(authorizationUrl,
@@ -67,49 +62,39 @@ class AuthService {
     }
   }
 
-  // 認可コードをトークンと交換
-  Future<Map<String, dynamic>> exchangeCodeForToken(
-      String authCode, String state) async {
-    // localStorageからcodeVerifierとstateを取得して検証
+  // Exchange authorization code for token
+  Future<oauth2.Client> handleAuthorizationCode(
+      Map<String, String> params) async {
     final storedCodeVerifier =
         await _secureStorage.read(key: 'oauth_code_verifier');
     final storedState = await _secureStorage.read(key: 'oauth_state');
 
-    if (state != storedState) {
+    if (params['state'] != storedState) {
       throw Exception('Invalid state parameter'); // state検証
     }
-
-    // 使用後にlocalStorageから削除
+    // Remove from localStorage after use
     await _secureStorage.delete(key: 'oauth_code_verifier');
     await _secureStorage.delete(key: 'oauth_state');
 
-    final response = await http.post(
-      Uri.parse(tokenEndpoint),
-      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-      body: {
-        'client_id': clientId,
-        'redirect_uri': redirectUri,
-        'grant_type': 'authorization_code',
-        'code': authCode,
-        'code_verifier': storedCodeVerifier!,
-      },
-    );
+    final grant = await oauth2.AuthorizationCodeGrant(
+        clientId, Uri.parse(authorizationEndpoint), Uri.parse(tokenEndpoint),
+        codeVerifier: storedCodeVerifier);
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to exchange code for token');
-    }
+    // this is dummy for setting state,
+    var _ = grant.getAuthorizationUrl(Uri.parse(redirectUri),
+        scopes: ['openid', 'profile', 'email'], state: storedState);
+
+    final client = await grant.handleAuthorizationResponse(params);
+    return client;
   }
 
-  // ユーザー情報を取得
-  Future<Map<String, dynamic>> fetchUserInfo(String accessToken) async {
-    final response = await http.get(
-      Uri.parse(userInfoEndpoint),
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
+  Future<Map<String, dynamic>> fetchUserInfoNew(oauth2.Client client) async {
+    final baseRequest = http.Request('GET', Uri.parse(userInfoEndpoint));
+    final streamResponse = await client.send(baseRequest);
+    if (streamResponse.statusCode == 200) {
+      final responseBytes = await streamResponse.stream.toBytes();
+      final responseString = utf8.decode(responseBytes);
+      return jsonDecode(responseString);
     } else {
       throw Exception('Failed to fetch user info');
     }

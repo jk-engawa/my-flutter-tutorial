@@ -12,12 +12,12 @@ class LoginScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Inventory Management System'), // 固定のタイトル
+        title: const Text('Inventory Management System'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
-            await auth.signInWithOAuth(); // OAuth認証を実行
+            await auth.signInWithOAuth(); // OAuth
           },
           child: const Text('Sign in with OAuth'),
         ),

@@ -18,19 +18,21 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$Auth {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String email, String name, String token) signedIn,
+    required TResult Function(String email, String name, oauth2.Client client)
+        signedIn,
     required TResult Function() signedOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String email, String name, String token)? signedIn,
+    TResult? Function(String email, String name, oauth2.Client client)?
+        signedIn,
     TResult? Function()? signedOut,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String email, String name, String token)? signedIn,
+    TResult Function(String email, String name, oauth2.Client client)? signedIn,
     TResult Function()? signedOut,
     required TResult orElse(),
   }) =>
@@ -82,7 +84,7 @@ abstract class _$$SignedInImplCopyWith<$Res> {
           _$SignedInImpl value, $Res Function(_$SignedInImpl) then) =
       __$$SignedInImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String email, String name, String token});
+  $Res call({String email, String name, oauth2.Client client});
 }
 
 /// @nodoc
@@ -100,7 +102,7 @@ class __$$SignedInImplCopyWithImpl<$Res>
   $Res call({
     Object? email = null,
     Object? name = null,
-    Object? token = null,
+    Object? client = null,
   }) {
     return _then(_$SignedInImpl(
       email: null == email
@@ -111,10 +113,10 @@ class __$$SignedInImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      token: null == token
-          ? _value.token
-          : token // ignore: cast_nullable_to_non_nullable
-              as String,
+      client: null == client
+          ? _value.client
+          : client // ignore: cast_nullable_to_non_nullable
+              as oauth2.Client,
     ));
   }
 }
@@ -123,19 +125,20 @@ class __$$SignedInImplCopyWithImpl<$Res>
 
 class _$SignedInImpl extends SignedIn {
   const _$SignedInImpl(
-      {required this.email, required this.name, required this.token})
+      {required this.email, required this.name, required this.client})
       : super._();
 
   @override
   final String email;
   @override
   final String name;
+// required String token,
   @override
-  final String token;
+  final oauth2.Client client;
 
   @override
   String toString() {
-    return 'Auth.signedIn(email: $email, name: $name, token: $token)';
+    return 'Auth.signedIn(email: $email, name: $name, client: $client)';
   }
 
   @override
@@ -145,11 +148,11 @@ class _$SignedInImpl extends SignedIn {
             other is _$SignedInImpl &&
             (identical(other.email, email) || other.email == email) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.token, token) || other.token == token));
+            (identical(other.client, client) || other.client == client));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, email, name, token);
+  int get hashCode => Object.hash(runtimeType, email, name, client);
 
   /// Create a copy of Auth
   /// with the given fields replaced by the non-null parameter values.
@@ -162,30 +165,32 @@ class _$SignedInImpl extends SignedIn {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String email, String name, String token) signedIn,
+    required TResult Function(String email, String name, oauth2.Client client)
+        signedIn,
     required TResult Function() signedOut,
   }) {
-    return signedIn(email, name, token);
+    return signedIn(email, name, client);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String email, String name, String token)? signedIn,
+    TResult? Function(String email, String name, oauth2.Client client)?
+        signedIn,
     TResult? Function()? signedOut,
   }) {
-    return signedIn?.call(email, name, token);
+    return signedIn?.call(email, name, client);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String email, String name, String token)? signedIn,
+    TResult Function(String email, String name, oauth2.Client client)? signedIn,
     TResult Function()? signedOut,
     required TResult orElse(),
   }) {
     if (signedIn != null) {
-      return signedIn(email, name, token);
+      return signedIn(email, name, client);
     }
     return orElse();
   }
@@ -226,12 +231,12 @@ abstract class SignedIn extends Auth {
   const factory SignedIn(
       {required final String email,
       required final String name,
-      required final String token}) = _$SignedInImpl;
+      required final oauth2.Client client}) = _$SignedInImpl;
   const SignedIn._() : super._();
 
   String get email;
-  String get name;
-  String get token;
+  String get name; // required String token,
+  oauth2.Client get client;
 
   /// Create a copy of Auth
   /// with the given fields replaced by the non-null parameter values.
@@ -281,7 +286,8 @@ class _$SignedOutImpl extends SignedOut {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String email, String name, String token) signedIn,
+    required TResult Function(String email, String name, oauth2.Client client)
+        signedIn,
     required TResult Function() signedOut,
   }) {
     return signedOut();
@@ -290,7 +296,8 @@ class _$SignedOutImpl extends SignedOut {
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String email, String name, String token)? signedIn,
+    TResult? Function(String email, String name, oauth2.Client client)?
+        signedIn,
     TResult? Function()? signedOut,
   }) {
     return signedOut?.call();
@@ -299,7 +306,7 @@ class _$SignedOutImpl extends SignedOut {
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String email, String name, String token)? signedIn,
+    TResult Function(String email, String name, oauth2.Client client)? signedIn,
     TResult Function()? signedOut,
     required TResult orElse(),
   }) {
